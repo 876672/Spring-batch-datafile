@@ -1,4 +1,4 @@
-package com.datafile.BatchConfig.Batchrepositories;
+package com.datafile.Batchrepositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

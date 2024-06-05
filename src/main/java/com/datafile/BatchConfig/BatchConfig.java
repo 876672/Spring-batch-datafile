@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.datafile.BatchConfig.Batchrepositories.CasaRepository;
+import com.datafile.Batchrepositories.CasaRepository;
 import com.datafile.model.CasaRecord;
 
 import lombok.RequiredArgsConstructor;
@@ -45,34 +45,32 @@ public class BatchConfig {
 				.reader(itemReader())
                 .writer(itemWriter())
                 .processor(processor)
-                
                 .allowStartIfComplete(true)) 
+				.build();
+	}
              
-                .build();
                
- 
-                }
 	
 
 
 	@Bean
 	public FlatFileItemReader<CasaRecord> itemReader() {
 		System.out.println("reader--------------------------");
+		return new FlatFileItemReaderBuilder<CasaRecord>()
+				.name("itemReader")
+				.resource(new ClassPathResource("cdb322w.txt"))
+				.lineTokenizer(fixedLengthTokenizer())
+				.targetType(CasaRecord.class)
+				
+				.strict(false)
+				.build();
+	}
+	
+	
+	
 
        
 
-        return new FlatFileItemReaderBuilder<CasaRecord>()
-            .name("itemReader")
-            .resource(new ClassPathResource("cdb322w.txt"))
-            .lineTokenizer(fixedLengthTokenizer())
-            .targetType(CasaRecord.class)
-            
-            .strict(false)
-            .build();
-    }
-	
-	
-	
 
 	
 	 @Bean
@@ -107,7 +105,6 @@ public class BatchConfig {
 	 
 
 	 public ItemProcessor<CasaRecord, CasaRecord> itemProcessor() {
-		 System.out.println("yyyyyyyyyyyyyyyyyy");
 	 return new CustomItemProcessor();
 		
 	}
@@ -131,13 +128,10 @@ public class BatchConfig {
 		System.out.println("job--------------------------");
 		return new JobBuilder("job2",jobRepository)
 				.start(step)
-				
 				.listener(listener)
 				.build();
-				
-			
 		
-	}
+				}
 	
 	
 }
