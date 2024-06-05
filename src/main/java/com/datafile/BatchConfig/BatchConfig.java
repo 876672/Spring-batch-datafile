@@ -4,7 +4,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.RepositoryItemWriter;
@@ -17,10 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
-
 import com.datafile.Batchrepositories.CasaRepository;
 import com.datafile.model.CasaRecord;
-
 import lombok.RequiredArgsConstructor;
 
 
@@ -40,7 +37,7 @@ public class BatchConfig {
 	public Step step(ItemProcessor<CasaRecord,CasaRecord> processor) {
 		System.out.println("step--------------------------");
 
-		return ((SimpleStepBuilder<CasaRecord, CasaRecord>) new StepBuilder("setp",jobRepository)
+		return (new StepBuilder("setp",jobRepository)
 				.<CasaRecord,CasaRecord>chunk(10,transactionManager)
 				.reader(itemReader())
                 .writer(itemWriter())
@@ -61,9 +58,9 @@ public class BatchConfig {
 				.resource(new ClassPathResource("cdb322w.txt"))
 				.lineTokenizer(fixedLengthTokenizer())
 				.targetType(CasaRecord.class)
-				
 				.strict(false)
 				.build();
+				
 	}
 	
 	
@@ -114,13 +111,13 @@ public class BatchConfig {
 	@Bean
 	public RepositoryItemWriter<CasaRecord>  itemWriter() {
 		System.out.println("itemWriter--------------------------");
-
 		return new RepositoryItemWriterBuilder<CasaRecord>()
 				.methodName("save")
-				
 				.repository(casaRepository)
 				.build();
-		}
+		
+	}
+
 	
 	
 	@Bean
